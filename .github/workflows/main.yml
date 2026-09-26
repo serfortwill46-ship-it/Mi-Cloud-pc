@@ -1,0 +1,28 @@
+name: Windows Cloud PC - AnyDesk
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Download & Install AnyDesk
+      run: |
+        Invoke-WebRequest -Uri "https://download.anydesk.com/AnyDesk.exe" -OutFile "AnyDesk.exe"
+    - name: Log In To AnyDesk
+      run: |
+        cmd /c AnyDesk.exe --install "C:\Program Files (x86)\AnyDesk" --start-with-win --silent
+        cmd /c "echo joyzonetech | C:\Progra~2\AnyDesk\AnyDesk.exe --set-password"
+        $id = (Get-Content "C:\ProgramData\AnyDesk\system.conf" | Select-String "ad.anydesk.id=").ToString().Replace("ad.anydesk.id=", "")
+        echo "========================"
+        echo "AnyDesk ID: $id"
+        echo "AnyDesk Password: joyzonetech"
+        echo "========================"
+    - name: Keep Alive
+      run: |
+        $i = 0
+        while ($i -lt 360) {
+          Start-Sleep -Seconds 60
+          $i++
+        }
